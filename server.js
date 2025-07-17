@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const userRoute = require('./routes/userRoute');
-const authRoute = require('./routes/userRoute');
+const authRoute = require('./routes/authRoute');
 const session = require('express-session');
 const passport = require('passport');
 require('./passport.js');
