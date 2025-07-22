@@ -1,8 +1,9 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const userRoute = require('./routes/userRoute');
-const authRoute = require('./routes/authRoute');
+const userRoute = require('./routes/userRoute.js');
+const authRoute = require('./routes/authRoute.js');
+const adminRoute = require('./routes/adminRoute.js')
 const session = require('express-session');
 const passport = require('passport');
 require('./passport.js');
@@ -10,7 +11,7 @@ require('./passport.js');
 const app = express();
 app.use(express.json());   //to
 //  fetch data from server in json like format
-app.use('/user', userRoute)
+app.use('/user', userRoute);
 
 mongoose.connect(process.env.MONGO_URI,{
     //optional keywords
@@ -24,6 +25,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/auth', authRoute);
+
+app.use('/admin', adminRoute);
 
 const PORT = process.env.PORT || 5000;
 
