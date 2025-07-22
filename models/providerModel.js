@@ -1,47 +1,38 @@
-const mongoose =require('mongoose');
-const providerSchema =new mongoose.Schema({
-    name:{
-        type:String,
-        required:true
-    },
-    serviceType:{
-        type:String,
-        required:true
-    },
-    phone:{
-        type:String,
-        required:true,
-        unique:true
-    },
-    email:{
-        type:String,
-        required:true
-    },
-    password:{
-        type:String,
-        required:false
-    },
+const mongoose = require('mongoose');
 
-    //add for google Qauth img
-    image:{
-        type:String,
+const providerSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true
+      
     },
-     isGoogleUser:{
-        type:Boolean,
-        default:false
-     },
+    email: {
+      type: String,
+      required: true, 
+      unique: true,
+      lowercase: true,
+    },
+    phone: {
+      type: String,
+      required: true, 
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
+    },
+  /*googleId:String,
+  image:String,*/
 
-    experience:{
-        type:Number,
-        default:0
+    category: {
+      type: String,
+      required: true, 
     },
-    available:{
-        type:Boolean,
-        default:true
-    }
-    },
-      {
-        timestamps:true
-      });
+   },
+  { timestamps: true }
+);
 
-      module.exports=mongoose.model('Provider',providerSchema);
+const Provider = mongoose.model('Provider', providerSchema);
+
+module.exports = Provider;

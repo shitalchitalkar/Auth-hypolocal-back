@@ -2,41 +2,43 @@ const Provider = require('../models/providerModel');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-
-//booking filr ref
-
-const Booking = require("../models/bookingModel");
-
 // Register
-exports.registerProvider = async (req, res) => {
+const registerProvider = async (req, res) => {
   try {
-    const { name, serviceType, phone, email, password, experience } = req.body;
+    const { name, email, phone, password, category } = req.body;
 
+    //if provider already exists
     const existing = await Provider.findOne({ email });
     if (existing) {
-      return res.status(400).json({ message: 'Provider already exists' });
+      return res.status(400).json({ message: 'Email already registered' });
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newProvider = new Provider({
+    // Create provider
+    const provider = await Provider.create({
       name,
-      serviceType,
-      phone,
       email,
+      phone,
       password: hashedPassword,
-      experience
+      category,
     });
 
-    await newProvider.save();
-    res.status(201).json({ message: 'Provider registered successfully', provider: newProvider });
+    res.status(201).json({
+      message: 'Registered successfully',
+      _id: provider._id,
+      name: provider.name,
+      email: provider.email,
+      token: generateToken(provider._id),
+    });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
 
 // Login
-exports.loginProvider = async (req, res) => {
+const loginProvider = async (req, res) => {
   try {
     const { email, password } = req.body;
 
@@ -47,88 +49,38 @@ exports.loginProvider = async (req, res) => {
 
     const isMatch = await bcrypt.compare(password, provider.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Incorrect password' });
     }
-
-    const token = jwt.sign(
-      { providerId: provider._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '7d' }
-    );
 
     res.status(200).json({
       message: 'Login successful',
-      token,
-      provider
+      _id: provider._id,
+      name: provider.name,
+      email: provider.email,
+      token: generateToken(provider._id),
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
 
-
-
-//google Qauth function .......//
-
-
-
-//*************************************** */
-// Get all providers
-exports.getAllProviders = async (req, res) => {
+// Get All Providers
+const getAllProviders = async (req, res) => {
   try {
-    const providers = await Provider.find();
+    const providers = await Provider.find().select('-password');
     res.status(200).json(providers);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
 
-//get profile info
-
-exports.getProviderProfile = async (req, res) => {
-  try {
-    const provider = await Provider.findById(req.provider._id).select("-password");
-    res.status(200).json(provider);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+// Token generator
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
-//update profile(use put)
-
-exports.updateProviderProfile = async (req, res) => {
-  try {
-    const provider = await Provider.findById(req.provider._id);
-    const { name, phone, experience } = req.body;
-
-    if (name) provider.name = name;
-    if (phone) provider.phone = phone;
-    if (experience !== undefined) provider.experience = experience;
-
-    await provider.save();
-
-    res.status(200).json({
-      message: "Profile updated successfully",
-      provider,
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+module.exports = {
+  registerProvider,
+  loginProvider,
+  getAllProviders,
 };
-
-//user booking view only for provider
-
-exports.getProviderBookings = async (req, res) => {
-  try {
-    const bookings = await Booking.find({ provider: req.provider._id })
-      .populate("user", "name email phone")  
-      .sort({ createdAt: -1 });              
-
-    res.status(200).json(bookings);
-  } catch (err) {
-    res.status(500).json({ message: "Server error", error: err.message });
-  }
-};
-
-//import both function google, login
-//module.exports = { googleLoginProvider ,loginProvider,registerProvider};

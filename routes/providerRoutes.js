@@ -1,39 +1,27 @@
 const express = require('express');
-const router = express.Router();
-
-const { googleLogin} = require('../controllers/providerGoogleController');
-
+//const passport = require ('passport');
+//require('../config/passport');
 const {
   registerProvider,
   loginProvider,
   getAllProviders,
-  getProviderProfile,
-  updateProviderProfile,
-  getProviderBookings,
-  
-  
 } = require('../controllers/providerController');
 
-const protectProvider = require('../middleware/authMiddleware');
+const { protectProvider } = require('../middleware/authMiddleware');
 
-// Public Routes
+const router = express.Router();
+
 router.post('/register', registerProvider);
 router.post('/login', loginProvider);
+router.get('/all', getAllProviders); // Public 
 
-//profile info
-router.get('/me',protectProvider,getProviderProfile);
-//update rpfile
+//google login
+/*router.get('/google/callback',passport.authenticate('provider-google',{
+  successRedirect:'/provider/dashboard',
+  failureRedirect:'/login'})
 
-router.put('/update',protectProvider,updateProviderProfile);
+);
+*/
 
-//view bookings 
-
-router.get("/bookings",protectProvider,getProviderBookings);
-
-// Protected Route
-router.get('/', getAllProviders);
-
-//googleqauth
-router.post('/auth/google', googleLogin);
 
 module.exports = router;

@@ -2,9 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const providerRoutes = require('./routes/providerRoutes');
+const serviceRoutes =require('./routes/serviceRoutes');
 
-const serviceRoute = require('./routes/serviceRoute');
-const adminRoutes =require('./routes/adminRoutes');
+const bookingRoutes= require('./routes/bookingRoutes');
+
+
+
 
 
 
@@ -28,13 +31,16 @@ mongoose.connect(process.env.MONGO_URI,{
 .then(() => console.log(' MongoDB connected'))
 .catch((err) => console.error(' MongoDB error:', err));
 
+
+//google
+
+
 //  Routes
 app.use('/api/providers', providerRoutes);
-//services model
-app.use('/api/services', serviceRoute);
-
-//admin
-app.use('/api/admin',adminRoutes);
+//service route
+app.use('/api/service',serviceRoutes);
+//booking
+app.use('/api/bookings',bookingRoutes);
 
 
 // Start Server
