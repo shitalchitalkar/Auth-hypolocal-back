@@ -3,13 +3,9 @@ const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const providerRoutes = require('./routes/providerRoutes');
 const serviceRoutes =require('./routes/serviceRoutes');
-
+const passport=require('./config/passport.js');
 const bookingRoutes= require('./routes/bookingRoutes');
-
-
-
-
-
+const authRoutes=require('./routes/authRoutes');
 
 
 dotenv.config(); 
@@ -41,6 +37,9 @@ app.use('/api/providers', providerRoutes);
 app.use('/api/service',serviceRoutes);
 //booking
 app.use('/api/bookings',bookingRoutes);
+
+//authroutes
+app.use('/api/auth', authRoutes); // ✅ CORRECT
 
 
 // Start Server

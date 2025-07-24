@@ -1,17 +1,18 @@
-/*import dotenv from 'dotenv';
+import dotenv from 'dotenv';
 dotenv.config();
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import Provider from '../models/providerModel.js';
 import jwt from 'jsonwebtoken';
-import { Profiler } from 'react';
+//import { Profiler } from 'react';
 
 passport.use(
     new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: '${process.env.BACKEND_URL}/api/auth/oauth/google/callback'
+        callbackURL:`${process.env.BACKEND_URL}/api/auth/oauth/google/callback`,
 
+        
     },
     async(profile,done)=>{
         try{
@@ -21,7 +22,6 @@ passport.use(
                 provider =await Provider.create({
                     name:profile.displayName,
                     email:profile.emails[0].value,
-                    phone:profile.phone,
                     password:'outh_placeholder',
                     role:'provider'
                 });
@@ -30,9 +30,9 @@ passport.use(
             provider.token=token
             return done(null,provider)//null says that there has occured no error 
         }catch(error){
-           return(error,null)
+           return(error,null);
         }
 
     }
 )
-)*/
+)

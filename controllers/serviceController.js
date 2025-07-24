@@ -25,7 +25,7 @@ const getAllServices = async (req, res) => {
   }
 };
 
-// ✅ Update service
+// Update service
  const updateService = async (req, res) => {
   const { name, category, price } = req.body;
 
